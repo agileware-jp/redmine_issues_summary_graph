@@ -22,7 +22,7 @@ module IssuesSummaryGraphHelper
 
 
     @projects.each do |project|
-      issues = project.issues
+      issues = project.issues.joins(:tracker).merge(Tracker.where(id: @tracker_ids))
 
       if version_ids.include? 0
         issues = issues.where("fixed_version_id IS NULL OR fixed_version_id IN (?)", version_ids)

@@ -1,7 +1,7 @@
 class IssuesSummaryGraphController < ApplicationController
   unloadable
   include IssuesSummaryGraphHelper
-  before_filter :find_projects
+  before_filter :find_projects, :set_tracker_ids
 
   DEFAULT_START_DATE = 6.month.ago
 
@@ -48,6 +48,14 @@ class IssuesSummaryGraphController < ApplicationController
     @versions = @projects.collect{|project| project.versions}.flatten
   rescue ActiveRecord::RecordNotFound
     render_404
+  end
+
+  def set_tracker_ids
+    @tracker_ids = if params[:tracker_ids].present?
+                     params[:tracker_ids].map(&:to_i)
+                   else
+                     @project.trackers.pluck(:id)
+                   end
   end
 
   def to_boolean(str)
