@@ -22,13 +22,19 @@ module IssuesSummaryGraphHelper
 
 
     @projects.each do |project|
-      issues = project.issues
+      issues = project.issues.joins(:tracker).merge(Tracker.where(id: @tracker_ids))
 
       if version_ids.include? 0
         issues = issues.where("fixed_version_id IS NULL OR fixed_version_id IN (?)", version_ids)
       else
         issues = issues.where("fixed_version_id IN (?)", version_ids)
       end
+
+      issues = if @issue_category_ids.include? 0
+                 issues.where("category_id IS NULL OR category_id IN (?)", @issue_category_ids)
+               else
+                 issues.where(category_id: @issue_category_ids)
+               end
 
       issues = issues.where("created_on >= ?", date_from.beginning_of_day) unless date_from.nil?
       issues = issues.where("created_on <= ?", date_to.end_of_day) unless date_to.nil?
