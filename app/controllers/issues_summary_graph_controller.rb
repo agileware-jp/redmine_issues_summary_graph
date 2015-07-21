@@ -1,7 +1,7 @@
 class IssuesSummaryGraphController < ApplicationController
   unloadable
   include IssuesSummaryGraphHelper
-  before_filter :find_projects, :set_tracker_ids
+  before_filter :find_projects, :set_tracker_ids, :set_issue_category_ids
 
   DEFAULT_START_DATE = 6.month.ago
 
@@ -56,6 +56,14 @@ class IssuesSummaryGraphController < ApplicationController
                    else
                      @project.trackers.pluck(:id)
                    end
+  end
+
+  def set_issue_category_ids
+    @issue_category_ids = if params[:issue_category_ids].present?
+                            params[:issue_category_ids].map(&:to_i)
+                          else
+                            @project.issue_categories.pluck(:id).unshift(0)
+                          end
   end
 
   def to_boolean(str)

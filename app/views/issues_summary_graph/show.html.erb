@@ -37,6 +37,13 @@
     </div>
   <% end %>
 
+  <% if @project.issue_categories.present? %>
+    <div>
+      <%= l(:label_issue_category) %>
+      <%= select_tag :issue_category_ids, options_from_collection_for_select(@project.issue_categories.unshift(IssueCategory.new { |c| c.id = 0 }), :id, :name, selected: @issue_category_ids), multiple: true %>
+    </div>
+  <% end %>
+
   <div>
     <%= submit_tag l(:reload) %>
   </div>
@@ -48,7 +55,7 @@
 </p>
 
 <p class="summary-graph">
-<%= image_tag(url_for(:controller => 'issues_summary_graph', :action => 'summary_graph', :project_id => @project.identifier, :closed_issue_statuses => @closed_status_ids, :versions => @version_ids, :from => @from, :to => @to, :include_subproject => @include_subproject, :tracker_ids => @tracker_ids, :format => 'png')) %>
+<%= image_tag(url_for(:controller => 'issues_summary_graph', :action => 'summary_graph', :project_id => @project.identifier, :closed_issue_statuses => @closed_status_ids, :versions => @version_ids, :from => @from, :to => @to, :include_subproject => @include_subproject, :tracker_ids => @tracker_ids, :issue_category_ids => @issue_category_ids, :format => 'png')) %>
 </p>
 </td>
 </tr>
