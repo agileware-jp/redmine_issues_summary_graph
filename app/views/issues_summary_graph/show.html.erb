@@ -33,14 +33,14 @@
   <% if @project.trackers.present? %>
     <div>
       <%= l(:label_tracker) %>
-      <%= select_tag :tracker_ids, options_from_collection_for_select(@project.trackers, :id, :name, selected: @tracker_ids), multiple: true %>
+      <%= select_tag :tracker_ids, tracker_options, multiple: true %>
     </div>
   <% end %>
 
   <% if @project.issue_categories.present? %>
     <div>
       <%= l(:label_issue_category) %>
-      <%= select_tag :issue_category_ids, options_from_collection_for_select(@project.issue_categories.unshift(IssueCategory.new { |c| c.id = 0 }), :id, :name, selected: @issue_category_ids), multiple: true %>
+      <%= select_tag :issue_category_ids, issue_category_options, multiple: true %>
     </div>
   <% end %>
 
