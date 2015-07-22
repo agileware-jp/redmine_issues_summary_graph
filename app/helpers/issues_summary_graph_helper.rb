@@ -183,4 +183,22 @@ module IssuesSummaryGraphHelper
     end
   end
 
+  def tracker_options
+    trackers = if params[:include_subproject].present?
+                 Tracker.joins(:projects).merge(Project.where(id: @project.self_and_descendants)).uniq
+               else
+                 @project.trackers
+               end
+    options_from_collection_for_select(trackers, :id, :name, selected: @tracker_ids)
+  end
+
+  def issue_category_options
+    issue_categories = if params[:include_subproject].present?
+                         IssueCategory.where(project_id: @project.self_and_descendants)
+                       else
+                         @project.issue_categories
+                       end
+    issue_categories.unshift(IssueCategory.new { |issue_category| issue_category.id = 0 })
+    options_from_collection_for_select(issue_categories, :id, :name, selected: @issue_category_ids)
+  end
 end
