@@ -21,19 +21,20 @@
     <%= l(:include_subproject) %>:
     <%= check_box_tag :include_subproject, true, @include_subproject %>
   </div>
-  <% unless @versions.empty? %>
-  <div>
-    <%= l(:label_version) %>:
-    <%= select_tag :version_ids,
-      options_for_select([["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @version_ids),
-      :multiple => true, :name => 'version_ids[]' %>
-  </div>
-  <% end %>
 
   <% if @project.trackers.present? %>
     <div>
       <%= l(:label_tracker) %>
       <%= select_tag :tracker_ids, tracker_options, multiple: true %>
+    </div>
+  <% end %>
+
+  <% unless @versions.empty? %>
+    <div>
+      <%= l(:label_version) %>:
+      <%= select_tag :version_ids,
+        options_for_select([["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @version_ids),
+        :multiple => true, :name => 'version_ids[]' %>
     </div>
   <% end %>
 
