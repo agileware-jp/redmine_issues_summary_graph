@@ -19,7 +19,7 @@
   </div>
   <div>
     <%= l(:include_subproject) %>:
-    <%= check_box_tag :include_subproject, true, @include_subproject %>
+    <%= check_box_tag :include_subproject, true, @include_subproject, data: { url: replace_options_issues_summary_graph_index_path(project_id: @project.id) } %>
   </div>
 
   <% if @project.trackers.present? %>
@@ -32,9 +32,7 @@
   <% unless @versions.empty? %>
     <div>
       <%= l(:label_version) %>:
-      <%= select_tag :version_ids,
-        options_for_select([["すべて", "-1"], ["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @selected_versions),
-        :multiple => true, :name => 'version_ids[]' %>
+      <%= select_tag :version_ids, version_options, :multiple => true, :name => 'version_ids[]' %>
     </div>
   <% end %>
 
@@ -63,6 +61,7 @@
 </table>
 
 <% content_for :header_tags do %>
+  <%= javascript_include_tag "issues_summary_graph", plugin: "redmine_issues_summary_graph" %>
   <%= stylesheet_link_tag "application.css", :plugin => "redmine_issues_summary_graph", :media => "screen" %>
   <script type="text/javascript">
     $(function() {

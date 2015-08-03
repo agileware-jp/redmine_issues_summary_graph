@@ -183,6 +183,10 @@ module IssuesSummaryGraphHelper
     end
   end
 
+  def version_options
+    options_for_select([["すべて", "-1"], ["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @selected_versions)
+  end
+
   def tracker_options
     trackers = if params[:include_subproject].present?
                  Tracker.joins(:projects).merge(@project.self_and_descendants).uniq
