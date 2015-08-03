@@ -189,7 +189,7 @@ module IssuesSummaryGraphHelper
                else
                  @project.trackers
                end
-    trackers.unshift(Tracker.new(name: "すべて") { |tracker| tracker.id = 0 })
+    trackers.unshift(Tracker.new(name: "すべて") { |tracker| tracker.id = -1 })
     options_from_collection_for_select(trackers, :id, :name, selected: @selected_trackers)
   end
 
@@ -200,6 +200,7 @@ module IssuesSummaryGraphHelper
                          @project.issue_categories
                        end
     issue_categories.unshift(IssueCategory.new { |issue_category| issue_category.id = 0 })
-    options_from_collection_for_select(issue_categories, :id, :name, selected: @issue_category_ids)
+    issue_categories.unshift(IssueCategory.new(name: "すべて") { |issue_category| issue_category.id = -1 })
+    options_from_collection_for_select(issue_categories, :id, :name, selected: @selected_issue_categories)
   end
 end

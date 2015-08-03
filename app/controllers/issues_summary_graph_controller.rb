@@ -51,20 +51,21 @@ class IssuesSummaryGraphController < ApplicationController
   end
 
   def set_tracker_ids
-    if params[:tracker_ids].instance_eval { blank? || include?("0") }
+    if params[:tracker_ids].instance_eval { blank? || include?("-1") }
       @tracker_ids = Tracker.joins(:projects).merge(@project.self_and_descendants).uniq.pluck(:id)
-      @selected_trackers = [0]
+      @selected_trackers = [-1]
     else
       @tracker_ids = @selected_trackers = params[:tracker_ids].map(&:to_i)
     end
   end
 
   def set_issue_category_ids
-    @issue_category_ids = if params[:issue_category_ids].present?
-                            params[:issue_category_ids].map(&:to_i)
-                          else
-                            @project.issue_categories.pluck(:id).unshift(0)
-                          end
+    if params[:issue_category_ids].instance_eval { blank? || include?("-1") }
+      @issue_category_ids = IssueCategory.where(project_id: @project.self_and_descendants).uniq.pluck(:id).unshift(0)
+      @selected_issue_categories = [-1]
+    else
+      @issue_category_ids = @selected_issue_categories = params[:issue_category_ids].map(&:to_i)
+    end
   end
 
   def to_boolean(str)
