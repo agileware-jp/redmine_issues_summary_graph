@@ -56,7 +56,8 @@ class IssuesSummaryGraphController < ApplicationController
 
   def set_tracker_ids
     if params[:tracker_ids].instance_eval { blank? || include?("-1") }
-      @tracker_ids = Tracker.joins(:projects).merge(@project.self_and_descendants).uniq.pluck(:id)
+      projects = (params[:include_subproject].present? ?  @project : @project.self_and_descendants)
+      @tracker_ids = Tracker.joins(:projects).merge(Project.where(id: projects)).uniq.pluck(:id)
       @selected_trackers = [-1]
     else
       @tracker_ids = @selected_trackers = params[:tracker_ids].map(&:to_i)
@@ -74,7 +75,8 @@ class IssuesSummaryGraphController < ApplicationController
 
   def set_issue_category_ids
     if params[:issue_category_ids].instance_eval { blank? || include?("-1") }
-      @issue_category_ids = IssueCategory.where(project_id: @project.self_and_descendants).uniq.pluck(:id).unshift(0)
+      projects = (params[:include_subproject].present? ?  @project : @project.self_and_descendants)
+      @issue_category_ids = IssueCategory.where(project_id: projects).uniq.pluck(:id).unshift(0)
       @selected_issue_categories = [-1]
     else
       @issue_category_ids = @selected_issue_categories = params[:issue_category_ids].map(&:to_i)
