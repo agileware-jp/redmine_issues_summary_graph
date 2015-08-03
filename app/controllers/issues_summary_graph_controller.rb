@@ -39,7 +39,18 @@ class IssuesSummaryGraphController < ApplicationController
     end
   end
 
+  # GET /issues_summary_graph/replace_options
+  def replace_options
+    params[:include_subproject] = to_boolean(params[:include_subproject])
+    render json: {
+      tracker_options: view_context.tracker_options,
+      version_options: view_context.version_options,
+      issue_category_options: view_context.issue_category_options
+    }
+  end
+
   private
+
   def find_projects
     project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
     @project = Project.find(project_id)
