@@ -185,11 +185,12 @@ module IssuesSummaryGraphHelper
 
   def tracker_options
     trackers = if params[:include_subproject].present?
-                 Tracker.joins(:projects).merge(Project.where(id: @project.self_and_descendants)).uniq
+                 Tracker.joins(:projects).merge(@project.self_and_descendants).uniq
                else
                  @project.trackers
                end
-    options_from_collection_for_select(trackers, :id, :name, selected: @tracker_ids)
+    trackers.unshift(Tracker.new(name: "すべて") { |tracker| tracker.id = -1 })
+    options_from_collection_for_select(trackers, :id, :name, selected: @selected_trackers)
   end
 
   def issue_category_options
@@ -199,6 +200,7 @@ module IssuesSummaryGraphHelper
                          @project.issue_categories
                        end
     issue_categories.unshift(IssueCategory.new { |issue_category| issue_category.id = 0 })
-    options_from_collection_for_select(issue_categories, :id, :name, selected: @issue_category_ids)
+    issue_categories.unshift(IssueCategory.new(name: "すべて") { |issue_category| issue_category.id = -1 })
+    options_from_collection_for_select(issue_categories, :id, :name, selected: @selected_issue_categories)
   end
 end

@@ -20,11 +20,11 @@ class IssuesSummaryGraphController < ApplicationController
       @closed_status_ids = IssueStatus.where(:is_closed => true).map {|status| status.id}
     end
 
-    if params[:version_ids]
-      @version_ids = params[:version_ids].map {|id| id.to_i}
+    if params[:version_ids].instance_eval { blank? || include?("-1") }
+      @version_ids = @projects.inject([0]) { |ids, project| ids + project.shared_versions.map(&:id) }.uniq
+      @selected_versions = [-1]
     else
-      @version_ids = [ 0 ]
-      @projects.each {|project| @version_ids += project.versions.map {|version| version.id.to_i}}
+      @version_ids = @selected_versions = params[:version_ids].map(&:to_i)
     end
 
     @versions = @projects.collect {|project| project.versions }.flatten
@@ -51,19 +51,21 @@ class IssuesSummaryGraphController < ApplicationController
   end
 
   def set_tracker_ids
-    @tracker_ids = if params[:tracker_ids].present?
-                     params[:tracker_ids].map(&:to_i)
-                   else
-                     @project.trackers.pluck(:id)
-                   end
+    if params[:tracker_ids].instance_eval { blank? || include?("-1") }
+      @tracker_ids = Tracker.joins(:projects).merge(@project.self_and_descendants).uniq.pluck(:id)
+      @selected_trackers = [-1]
+    else
+      @tracker_ids = @selected_trackers = params[:tracker_ids].map(&:to_i)
+    end
   end
 
   def set_issue_category_ids
-    @issue_category_ids = if params[:issue_category_ids].present?
-                            params[:issue_category_ids].map(&:to_i)
-                          else
-                            @project.issue_categories.pluck(:id).unshift(0)
-                          end
+    if params[:issue_category_ids].instance_eval { blank? || include?("-1") }
+      @issue_category_ids = IssueCategory.where(project_id: @project.self_and_descendants).uniq.pluck(:id).unshift(0)
+      @selected_issue_categories = [-1]
+    else
+      @issue_category_ids = @selected_issue_categories = params[:issue_category_ids].map(&:to_i)
+    end
   end
 
   def to_boolean(str)
