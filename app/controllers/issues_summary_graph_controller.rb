@@ -20,11 +20,11 @@ class IssuesSummaryGraphController < ApplicationController
       @closed_status_ids = IssueStatus.where(:is_closed => true).map {|status| status.id}
     end
 
-    if params[:version_ids]
-      @version_ids = params[:version_ids].map {|id| id.to_i}
+    if params[:version_ids].instance_eval { blank? || include?("-1") }
+      @version_ids = @projects.inject([0]) { |ids, project| ids + project.shared_versions.map(&:id) }.uniq
+      @selected_versions = [-1]
     else
-      @version_ids = [ 0 ]
-      @projects.each {|project| @version_ids += project.versions.map {|version| version.id.to_i}}
+      @version_ids = @selected_versions = params[:version_ids].map(&:to_i)
     end
 
     @versions = @projects.collect {|project| project.versions }.flatten

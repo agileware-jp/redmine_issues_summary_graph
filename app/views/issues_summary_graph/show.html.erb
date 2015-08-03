@@ -33,7 +33,7 @@
     <div>
       <%= l(:label_version) %>:
       <%= select_tag :version_ids,
-        options_for_select([["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @version_ids),
+        options_for_select([["すべて", "-1"], ["", "0"]] + @versions.collect {|version| [version.name, version.id]}, @selected_versions),
         :multiple => true, :name => 'version_ids[]' %>
     </div>
   <% end %>
