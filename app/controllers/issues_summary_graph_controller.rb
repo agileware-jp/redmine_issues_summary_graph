@@ -1,7 +1,7 @@
 class IssuesSummaryGraphController < ApplicationController
   unloadable
   include IssuesSummaryGraphHelper
-  before_filter :find_projects, :set_tracker_ids, :set_issue_category_ids
+  before_filter :find_projects, :set_tracker_ids, :set_version_ids, :set_issue_category_ids
 
   DEFAULT_START_DATE = 6.month.ago
 
@@ -18,13 +18,6 @@ class IssuesSummaryGraphController < ApplicationController
       @closed_status_ids = params[:closed_status_ids].map {|id| id.to_i}
     else
       @closed_status_ids = IssueStatus.where(:is_closed => true).map {|status| status.id}
-    end
-
-    if params[:version_ids].instance_eval { blank? || include?("-1") }
-      @version_ids = @projects.inject([0]) { |ids, project| ids + project.shared_versions.map(&:id) }.uniq
-      @selected_versions = [-1]
-    else
-      @version_ids = @selected_versions = params[:version_ids].map(&:to_i)
     end
 
     @versions = @projects.collect {|project| project.versions }.flatten
@@ -67,6 +60,15 @@ class IssuesSummaryGraphController < ApplicationController
       @selected_trackers = [-1]
     else
       @tracker_ids = @selected_trackers = params[:tracker_ids].map(&:to_i)
+    end
+  end
+
+  def set_version_ids
+    if params[:version_ids].instance_eval { blank? || include?("-1") }
+      @version_ids = @projects.inject([0]) { |ids, project| ids + project.shared_versions.map(&:id) }.uniq
+      @selected_versions = [-1]
+    else
+      @version_ids = @selected_versions = params[:version_ids].map(&:to_i)
     end
   end
 
