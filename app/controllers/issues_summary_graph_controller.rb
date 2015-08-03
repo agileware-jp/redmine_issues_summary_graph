@@ -51,11 +51,12 @@ class IssuesSummaryGraphController < ApplicationController
   end
 
   def set_tracker_ids
-    @tracker_ids = if params[:tracker_ids].present?
-                     params[:tracker_ids].map(&:to_i)
-                   else
-                     @project.trackers.pluck(:id)
-                   end
+    if params[:tracker_ids].instance_eval { blank? || include?("0") }
+      @tracker_ids = Tracker.joins(:projects).merge(@project.self_and_descendants).uniq.pluck(:id)
+      @selected_trackers = [0]
+    else
+      @tracker_ids = @selected_trackers = params[:tracker_ids].map(&:to_i)
+    end
   end
 
   def set_issue_category_ids
