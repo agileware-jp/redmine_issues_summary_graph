@@ -1,7 +1,7 @@
 require 'redmine'
 
 Redmine::Plugin.register :redmine_issues_summary_graph do
-  name 'Redmine Issues Summary Graph plugin'
+  name 'Redmine Issues Summary Graph plugin (Customized by RSD)'
   author 'suer'
   description 'issues summary graph'
   version '0.0.9'
