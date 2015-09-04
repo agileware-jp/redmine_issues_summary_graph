@@ -68,8 +68,7 @@
       // for IE キャッシュが効いてる時に、onloadが発火しないので、常にキャッシュが効かないようにする
       $('.summary-graph img').on('load', function() {
         $('.spinner img').hide();
-      })
-      .attr('src', $('.summary-graph img').attr('src') + '?' + new Date().getTime());
+      }).attr('src', $('.summary-graph img').attr('src') + '?' + new Date().getTime());
     });
   </script>
 <% end %>
