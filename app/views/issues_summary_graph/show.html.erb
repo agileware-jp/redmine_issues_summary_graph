@@ -65,9 +65,10 @@
   <%= stylesheet_link_tag "application.css", :plugin => "redmine_issues_summary_graph", :media => "screen" %>
   <script type="text/javascript">
     $(function() {
+      // for IE キャッシュが効いてる時にonloadが発火しないので、タイムスタンプをつけて常にキャッシュが効かないようにする
       $('.summary-graph img').on('load', function() {
         $('.spinner img').hide();
-      });
+      }).attr('src', $('.summary-graph img').attr('src') + '?' + new Date().getTime());
     });
   </script>
 <% end %>
